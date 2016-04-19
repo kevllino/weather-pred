@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<head>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src='https://www.google.com/jsapi?autoload={
+        "modules":[{
+        "name":"visualization",
+        "version":"1"
+        }]}'></script>
+
+<script type="text/javascript">
+    // Load the Visualization API and the corechart package.
+    google.charts.load('current', {
+        'packages' : [ 'corechart' ]
+    });
+    
+   function call(){
+        var check_data = {{check_data_flask}};//empty without submit
+                // var check_data = 0;
+        if(check_data == null || check_data != 0){ 
+            alert("data query failed");
+        }else{
+            
+            google.charts.setOnLoadCallback(chart);
+        }
+   }    
+    function chart() {
+        
+        var preTempp = {{JSsingle_pred_temp}}; //an arry from flask 
+        var preTemp = preTempp[0];//int
+        //get the predicted and actual temperature arrays of 1 month temperature of the location from flask
+        var monthTempPre = {{JSpred_temp}};//array
+        var monthTempAct = {{JSact_temp}};//array
+
+        var location = '{{JSlocation|safe}}';//string
+        var time = '{{JSsingle_date|safe}}';//string
+        //var location = "Houston";//string
+        //var time = "2016-01-01";//string
+        
+        // if (preTemp == null || monthTempPre == null  || monthTempAct == null || location == null || location == "" || time == null || time == "" ) {
+        //     alert("no data available");
+        // } else {
+        var mon = time.substring(5, 7);
+        var year = time.substring(0, 4);//2016-01-01
+        var month = "January";
+
+        if (mon == 2)
+            month = "February";
+        if (mon == 3)
+            month = "March";
+        if (mon == 4)
+            month = "April";
+        if (mon == 5)
+            month = "May";
+        if (mon == 6)
+            month = "June";
+        if (mon == 7)
+            month = "July";
+        if (mon == 8)
+            month = "August";
+        if (mon == 9)
+            month = "September";
+        if (mon == 10)
+            month = "October";
+        if (mon == 11)
+            month = "November";
+        if (mon == 12)
+            month = "December";
+
+        //chart1
+        var data = new google.visualization.DataTable();
+        data.addColumn('number', 'date');
+        data.addColumn('number', 'Actual');
+        data.addColumn('number', 'Predicted');
+        //a FOR loop to add all temperatures of one month
+        for (i = 0; i < monthTempPre.length; i++) {
+            data.addRows([ [ i + 1, monthTempPre[i], monthTempAct[i] ] ]);
+        }
+        var options = {
+            title : location + ' ' + month + ',' + year,
+            hAxis : {title : 'Date'},
+            width : 800,
+            height : 300,
+            vAxis : {title : 'Temperature'},
+            colors : [ '#a52714', '#097138' ],
+            crosshair : {color : '#000',trigger : 'selection'}
+        };
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div1'));
+        chart.draw(data, options);
+
+        //chart2
+        var time2 = parseInt(time.substring(8, 10)) + 1;
+        var time3 = time.substring(0, 8) + time2.toString();
+        var data2 = google.visualization.arrayToDataTable([ [ 'City', 'Date', 'Temp' ], [ location, time3, preTemp ] ]);
+        var options2 = {
+            sizeAxis : {
+                minValue : -50,
+                maxValue : 50
+            },
+            region : 'US',
+            width : 600,
+            height : 600,
+            displayMode : 'markers'
+        };
+        var chart2 = new google.visualization.GeoChart(document.getElementById('chart_div2'));
+        chart2.draw(data2, options2);
+        // }
+    }
+</script>
+
+<script type="text/javascript">
+function validate() {
+    var x = document.forms["input"]["location"].value;
+    var y = document.forms["input"]["date"].value;
+    if (x == null || x == "") {
+        alert("location must be filled out");
+        return false;
+    }
+    if (y == null || y == "") {
+        alert("date must be filled out");
+        return false;
+    }
+    if(y.substring(0, 4) > 2016 || y.substring(0, 4) < 2013) {
+        alert("year must be between 2013 - 2016");
+        return false;
+    }
+    if((y.substring(0, 4) == 2016 && y.substring(5, 7) > 3) || (y.substring(0, 4) == 2016 && y.substring(5, 7) == 3 || y.substring(8, 10) > 30) ) {
+        alert("date cannot be beyound 2016-03-30");
+        return false;
+    }
+}
+</script>
+
+<center>
+    <h1>Welcome to Weather Prediction</h1>
+    <p class="lead">Input the location and the time to get the
+        predicted weather information.</p>
+</center>
+</head>
+
+<body onload="call()">
+    <center>
+        <form method="post" onsubmit="return validate()" name="input">
+            <table width=100% height=100%>
+                <tr style="color: #fff; background: black;" height=50>
+                    <td>Location: 
+                    <select id="location" name="location">
+                            <option selected disabled hidden style='display: none' value=''></option>
+                            <option value="Los Angeles">Los Angeles</option>
+                            <option value="Chicago">Chicago</option>
+                            <option value="Houston">Houston</option>
+                            <option value="Philadelphia">Philadelphia</option>
+                            <option value="San Antonio">San Antonio</option>
+                            <option value="Phoenix">Houston</option>
+                            <option value="San Diego">San Diego</option>
+                            <option value="Dallas">Dallas</option>
+                            <option value="Austin">Austin</option>
+                            <option value="Jacksonville">Jacksonville</option>
+                            <option value="San Francisco">San Francisco</option>
+                            <option value="Indianapolis">Indianapolis</option>
+                            <option value="Columbus">Columbus</option>
+                            <option value="Fort Worth">Fort Worth</option>
+                            <option value="Charlotte">Charlotte</option>
+                            <option value="Detroit">Detroit</option>
+                            <option value="El Paso">El Paso</option>
+                            <option value="Seattle">Seattle</option>
+                            <option value="Denver">Denver</option>
+                            <option value="Washington">Washington</option>
+                            <option value="Memphis">Memphis</option>
+                            <option value="Boston">Boston</option>
+                            <option value="Nashville">Nashville</option>
+                            <option value="Baltimore">Baltimore</option>
+                            <option value="Oklahoma City">Oklahoma City</option>
+                            <option value="Portland">Portland</option>
+                            <option value="Las Vegas">Las Vegas</option>
+                            <option value="Louisville">Louisville</option>
+                            <option value="Milwaukee">Milwaukee</option>
+                            <option value="Albuquerque">Albuquerque</option>
+                            <option value="Tucson">Tucson</option>
+                            <option value="Fresno">Fresno</option>
+                            <option value="Sacramento">Sacramento</option>
+                            <option value="Long Beach">Long Beach</option>
+                            <option value="Kansas City">Kansas City</option>
+                            <option value="Mesa">Mesa</option>
+                            <option value="Virginia Beach">Virginia Beach</option>
+                            <option value="Omaha">Omaha</option>
+                            <option value="Colorado Springs">Colorado Springs</option>
+                            <option value="Raleigh">Raleigh</option>
+                            <option value="Miami">Miami</option>
+                            <option value="Oakland">Oakland</option>
+                            <option value="Minneapolis">Minneapolis</option>
+                            <option value="Tulsa">Tulsa</option>
+                            <option value="Cleveland">Cleveland</option>
+                            <option value="Wichita">Wichita</option>
+                            <option value="New Orleans">New Orleans</option>
+                            <option value="Arlington">Arlington</option>
+                            <option value="Bakersfield">Bakersfield</option>
+                            <option value="Tampa">Tampa</option>
+                            <option value="Aurora">Aurora</option>
+                            <option value="Honolulu">Honolulu</option>
+                    </select> 
+                    </td>
+                    <td>Date: 
+                    <input type="date" id="date" name="date">
+                    </td>
+                    <td align="center">
+                        <input type="submit" value="Submit" style="width: 100px; height: 50px"> 
+                      <!--   <input type="button" value="OK" onclick="call()" style="width: 100px; height: 50px"> -->
+                    </td>
+                </tr>
+            </table>
+            <table width=100% height=100%>
+                <tr>
+                    <td><div id="chart_div1"></div></td>
+                    <td><div id="chart_div2"></div></td>
+                </tr>
+            </table>
+        </form>
+
+    </center>
+</body>
+</html>

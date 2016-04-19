@@ -1,0 +1,5 @@
+Flask == 0.10.1
+Jinja2 == 2.8
+pandas == 0.17.0
+PyHive == 0.1.7
+simplejson == 3.8.2
