@@ -7,7 +7,7 @@ The WeatherPred Data Pipeline consists in 3 parts:
 </li>
 
 <li>
-<b>text-manip.sh</b> allowed to process, and transform the data in a format which could be fed to Spark.<br>
+<b>text_manip.sh</b> allowed to process, and transform the data in a format which could be fed to Spark.<br>
 </li>
 
 <li>
