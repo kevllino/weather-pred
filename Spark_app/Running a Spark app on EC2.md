@@ -1,4 +1,4 @@
-<h1>Quick guide to jelp you run a Spark applciation on an EC2 cluster with the right configurations (toavoid e.g. MetadataFailedFetchException) </h1>
+<h1>Quick guide to jelp you run a Spark application on an EC2 cluster</h1> with the right configurations (toavoid e.g. MetadataFailedFetchException) 
 
 <ol>
 <li>
